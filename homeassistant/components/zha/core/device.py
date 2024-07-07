@@ -8,7 +8,6 @@ from datetime import timedelta
 from enum import Enum
 from functools import cached_property
 import logging
-import random
 import time
 from typing import TYPE_CHECKING, Any, Self
 
@@ -88,6 +87,7 @@ from .const import (
 )
 from .endpoint import Endpoint
 from .helpers import LogMixin, async_get_zha_config_value, convert_to_zcl_values
+import secrets
 
 if TYPE_CHECKING:
     from ..websocket_api import ClusterBinding
@@ -172,7 +172,7 @@ class ZHADevice(LogMixin):
                 self._endpoints[ep_id] = Endpoint.new(endpoint, self)
 
         if not self.is_coordinator:
-            keep_alive_interval = random.randint(*_UPDATE_ALIVE_INTERVAL)
+            keep_alive_interval = secrets.SystemRandom().randint(*_UPDATE_ALIVE_INTERVAL)
             self.debug(
                 "starting availability checks - interval: %s", keep_alive_interval
             )

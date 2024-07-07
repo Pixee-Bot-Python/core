@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from enum import Enum
-import random
 import string
 from typing import TYPE_CHECKING
 
@@ -15,6 +14,7 @@ from .entity import (
     EcovacsDescriptionEntity,
     EcovacsEntity,
 )
+import secrets
 
 if TYPE_CHECKING:
     from .controller import EcovacsController
@@ -26,7 +26,7 @@ def get_client_device_id(hass: HomeAssistant, self_hosted: bool) -> str:
         return f"HA-{slugify(hass.config.location_name)}"
 
     return "".join(
-        random.choice(string.ascii_uppercase + string.digits) for _ in range(8)
+        secrets.choice(string.ascii_uppercase + string.digits) for _ in range(8)
     )
 
 

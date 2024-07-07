@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-import random
 from typing import Any
 
 from lightify import Lightify
@@ -28,6 +27,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 import homeassistant.util.color as color_util
+import secrets
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -305,9 +305,9 @@ class Luminary(LightEntity):
         """Play selected effect."""
         if effect == EFFECT_RANDOM:
             self._rgb_color = (
-                random.randrange(0, 256),
-                random.randrange(0, 256),
-                random.randrange(0, 256),
+                secrets.SystemRandom().randrange(0, 256),
+                secrets.SystemRandom().randrange(0, 256),
+                secrets.SystemRandom().randrange(0, 256),
             )
             self._luminary.set_rgb(*self._rgb_color, transition)
             self._luminary.set_onoff(True)

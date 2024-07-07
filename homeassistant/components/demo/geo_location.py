@@ -5,7 +5,6 @@ from __future__ import annotations
 from datetime import timedelta
 import logging
 from math import cos, pi, radians, sin
-import random
 
 from homeassistant.components.geo_location import GeolocationEvent
 from homeassistant.const import UnitOfLength
@@ -13,6 +12,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import track_time_interval
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
+import secrets
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -69,9 +69,9 @@ class DemoManager:
         home_longitude = self._hass.config.longitude
 
         # Approx. 111km per degree (north-south).
-        radius_in_degrees = random.random() * MAX_RADIUS_IN_KM / AVG_KM_PER_DEGREE
+        radius_in_degrees = secrets.SystemRandom().random() * MAX_RADIUS_IN_KM / AVG_KM_PER_DEGREE
         radius_in_km = radius_in_degrees * AVG_KM_PER_DEGREE
-        angle = random.random() * 2 * pi
+        angle = secrets.SystemRandom().random() * 2 * pi
         # Compute coordinates based on radius and angle. Adjust longitude value
         # based on HA's latitude.
         latitude = home_latitude + radius_in_degrees * sin(angle)
@@ -79,7 +79,7 @@ class DemoManager:
             radians(home_latitude)
         )
 
-        event_name = random.choice(EVENT_NAMES)
+        event_name = secrets.choice(EVENT_NAMES)
         return DemoGeolocationEvent(
             event_name, radius_in_km, latitude, longitude, UnitOfLength.KILOMETERS
         )
@@ -98,7 +98,7 @@ class DemoManager:
         # Remove devices.
         for _ in range(1, count + 1):
             if self._managed_devices:
-                device = random.choice(self._managed_devices)
+                device = secrets.choice(self._managed_devices)
                 if device:
                     _LOGGER.debug("Removing %s", device)
                     self._managed_devices.remove(device)

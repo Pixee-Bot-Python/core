@@ -5,7 +5,6 @@ from __future__ import annotations
 import asyncio
 import copy
 import logging
-import random
 import string
 from typing import Any
 from urllib.parse import urlparse
@@ -57,6 +56,7 @@ from .const import (
 )
 from .errors import CannotConnect
 from .panel import KONN_MODEL, KONN_MODEL_PRO, get_status
+import secrets
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -199,7 +199,7 @@ class KonnectedFlowHandler(ConfigFlow, domain=DOMAIN):
 
         self.data[CONF_MODEL] = status.get("model", KONN_MODEL)
         self.data[CONF_ACCESS_TOKEN] = "".join(
-            random.choices(f"{string.ascii_uppercase}{string.digits}", k=20)
+            secrets.SystemRandom().choices(f"{string.ascii_uppercase}{string.digits}", k=20)
         )
 
     async def async_step_import(self, device_config):
@@ -373,7 +373,7 @@ class KonnectedFlowHandler(ConfigFlow, domain=DOMAIN):
         self.data[CONF_DEFAULT_OPTIONS] = self.options
         self.data[CONF_ACCESS_TOKEN] = self.hass.data.get(DOMAIN, {}).get(
             CONF_ACCESS_TOKEN
-        ) or "".join(random.choices(f"{string.ascii_uppercase}{string.digits}", k=20))
+        ) or "".join(secrets.SystemRandom().choices(f"{string.ascii_uppercase}{string.digits}", k=20))
 
         return self.async_create_entry(
             title=KONN_PANEL_MODEL_NAMES[self.data[CONF_MODEL]],

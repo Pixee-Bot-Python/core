@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from random import randrange
 from typing import Any, cast
 
 from pyatv import connect, exceptions, scan
@@ -40,6 +39,7 @@ from homeassistant.helpers.dispatcher import (
 from homeassistant.helpers.entity import Entity
 
 from .const import CONF_CREDENTIALS, CONF_IDENTIFIERS, CONF_START_OFF, DOMAIN
+import secrets
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -308,7 +308,7 @@ class AppleTVManager(DeviceListener):
             backoff = min(
                 max(
                     BACKOFF_TIME_LOWER_LIMIT,
-                    randrange(2**self._connection_attempts),
+                    secrets.SystemRandom().randrange(2**self._connection_attempts),
                 ),
                 BACKOFF_TIME_UPPER_LIMIT,
             )

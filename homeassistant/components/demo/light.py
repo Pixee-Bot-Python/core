@@ -1,8 +1,6 @@
 """Demo light platform that implements lights."""
 
 from __future__ import annotations
-
-import random
 from typing import Any
 
 from homeassistant.components.light import (
@@ -23,6 +21,7 @@ from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import DOMAIN
+import secrets
 
 LIGHT_COLORS = [(56, 86), (345, 75)]
 
@@ -118,7 +117,7 @@ class DemoLight(LightEntity):
         """Initialize the light."""
         self._available = True
         self._brightness = brightness
-        self._ct = ct or random.choice(LIGHT_TEMPS)
+        self._ct = ct or secrets.choice(LIGHT_TEMPS)
         self._effect = effect
         self._effect_list = effect_list
         self._hs_color = hs_color

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from datetime import timedelta
 import logging
-import random
 
 import discogs_client
 import voluptuous as vol
@@ -20,6 +19,7 @@ from homeassistant.helpers.aiohttp_client import SERVER_SOFTWARE
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
+import secrets
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -147,7 +147,7 @@ class DiscogsSensor(SensorEntity):
         # Index 0 in the folders is the 'All' folder
         collection = self._discogs_data["folders"][0]
         if collection.count > 0:
-            random_index = random.randrange(collection.count)
+            random_index = secrets.SystemRandom().randrange(collection.count)
             random_record = collection.releases[random_index].release
 
             self._attrs = random_record.data

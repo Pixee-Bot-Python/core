@@ -10,7 +10,6 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from functools import partial, wraps
 import logging
-from random import randint
 import time
 from typing import TYPE_CHECKING, Any, Concatenate, Generic, TypeVar
 
@@ -56,6 +55,7 @@ from .ratelimit import KeyedRateLimit
 from .sun import get_astral_event_next
 from .template import RenderInfo, Template, result_as_boolean
 from .typing import TemplateVarsType
+import secrets
 
 _TRACK_STATE_CHANGE_DATA: HassKey[_KeyedEventData[EventStateChangedData]] = HassKey(
     "track_state_change_data"
@@ -1846,7 +1846,7 @@ def async_track_utc_time_change(
     # Avoid aligning all time trackers to the same fraction of a second
     # since it can create a thundering herd problem
     # https://github.com/home-assistant/core/issues/82231
-    microsecond = randint(RANDOM_MICROSECOND_MIN, RANDOM_MICROSECOND_MAX)
+    microsecond = secrets.SystemRandom().randint(RANDOM_MICROSECOND_MIN, RANDOM_MICROSECOND_MAX)
     listener_job_name = f"time change listener {hour}:{minute}:{second} {action}"
     track = _TrackUTCTimeChange(
         hass,

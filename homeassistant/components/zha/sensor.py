@@ -9,7 +9,6 @@ import enum
 import functools
 import logging
 import numbers
-import random
 from typing import TYPE_CHECKING, Any, Self
 
 from zhaquirks.danfoss import thermostat as danfoss_thermostat
@@ -80,6 +79,7 @@ from .core.const import (
 from .core.helpers import get_zha_data, validate_device_class, validate_unit
 from .core.registries import SMARTTHINGS_HUMIDITY_CLUSTER, ZHA_ENTITIES
 from .entity import BaseZhaEntity, ZhaEntity
+import secrets
 
 if TYPE_CHECKING:
     from .core.cluster_handlers import ClusterHandler
@@ -253,7 +253,7 @@ class PollableSensor(Sensor):
         """Run when about to be added to hass."""
         await super().async_added_to_hass()
         if self._use_custom_polling:
-            refresh_interval = random.randint(30, 60)
+            refresh_interval = secrets.SystemRandom().randint(30, 60)
             self._cancel_refresh_handle = async_track_time_interval(
                 self.hass, self._refresh, timedelta(seconds=refresh_interval)
             )

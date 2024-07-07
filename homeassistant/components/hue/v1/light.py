@@ -6,7 +6,6 @@ import asyncio
 from datetime import timedelta
 from functools import partial
 import logging
-import random
 
 import aiohue
 
@@ -53,6 +52,7 @@ from ..const import (
     REQUEST_REFRESH_DELAY,
 )
 from .helpers import remove_devices
+import secrets
 
 SCAN_INTERVAL = timedelta(seconds=5)
 
@@ -570,8 +570,8 @@ class HueLight(CoordinatorEntity, LightEntity):
             if effect == EFFECT_COLORLOOP:
                 command["effect"] = "colorloop"
             elif effect == EFFECT_RANDOM:
-                command["hue"] = random.randrange(0, 65535)
-                command["sat"] = random.randrange(150, 254)
+                command["hue"] = secrets.SystemRandom().randrange(0, 65535)
+                command["sat"] = secrets.SystemRandom().randrange(150, 254)
             else:
                 command["effect"] = "none"
 

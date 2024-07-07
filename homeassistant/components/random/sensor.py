@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from random import randrange
 from typing import Any
 
 import voluptuous as vol
@@ -26,6 +25,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 
 from .const import DEFAULT_MAX, DEFAULT_MIN
+import secrets
 
 ATTR_MAXIMUM = "maximum"
 ATTR_MINIMUM = "minimum"
@@ -88,4 +88,4 @@ class RandomSensor(SensorEntity):
     async def async_update(self) -> None:
         """Get a new number and updates the states."""
 
-        self._attr_native_value = randrange(self._minimum, self._maximum + 1)
+        self._attr_native_value = secrets.SystemRandom().randrange(self._minimum, self._maximum + 1)

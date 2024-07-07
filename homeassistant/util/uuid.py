@@ -1,6 +1,5 @@
 """Helpers to generate uuids."""
-
-from random import getrandbits
+import secrets
 
 
 def random_uuid_hex() -> str:
@@ -9,4 +8,4 @@ def random_uuid_hex() -> str:
     This uuid should not be used for cryptographically secure
     operations.
     """
-    return f"{getrandbits(32 * 4):032x}"
+    return f"{secrets.SystemRandom().getrandbits(32 * 4):032x}"
