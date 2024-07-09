@@ -21,6 +21,7 @@ from homeassistant.util import Throttle
 from . import AbodeSystem
 from .const import DOMAIN, LOGGER
 from .entity import AbodeDevice
+from security import safe_requests
 
 MIN_TIME_BETWEEN_UPDATES = timedelta(seconds=90)
 
@@ -77,8 +78,7 @@ class AbodeCamera(AbodeDevice, Camera):
         """Attempt to download the most recent capture."""
         if self._device.image_url:
             try:
-                self._response = requests.get(
-                    self._device.image_url, stream=True, timeout=10
+                self._response = safe_requests.get(self._device.image_url, stream=True, timeout=10
                 )
 
                 self._response.raise_for_status()

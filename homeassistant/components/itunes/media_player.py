@@ -19,6 +19,7 @@ from homeassistant.core import HomeAssistant
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
+from security import safe_requests
 
 DEFAULT_NAME = "iTunes"
 DEFAULT_PORT = 8181
@@ -65,7 +66,7 @@ class Itunes:
 
         try:
             if method == "GET":
-                response = requests.get(url, timeout=DEFAULT_TIMEOUT)
+                response = safe_requests.get(url, timeout=DEFAULT_TIMEOUT)
             elif method in ("POST", "PUT"):
                 response = requests.put(url, params, timeout=DEFAULT_TIMEOUT)
             elif method == "DELETE":

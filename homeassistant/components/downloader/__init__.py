@@ -35,6 +35,7 @@ from .const import (
     DOWNLOAD_FAILED_EVENT,
     SERVICE_DOWNLOAD_FILE,
 )
+from security import safe_requests
 
 CONFIG_SCHEMA = vol.Schema(
     {DOMAIN: vol.Schema({vol.Required(CONF_DOWNLOAD_DIR): cv.string})},
@@ -132,7 +133,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
                 final_path = None
 
-                req = requests.get(url, stream=True, timeout=10)
+                req = safe_requests.get(url, stream=True, timeout=10)
 
                 if req.status_code != HTTPStatus.OK:
                     _LOGGER.warning(
