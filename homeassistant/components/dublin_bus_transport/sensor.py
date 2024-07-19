@@ -9,8 +9,6 @@ from __future__ import annotations
 from contextlib import suppress
 from datetime import datetime, timedelta
 from http import HTTPStatus
-
-import requests
 import voluptuous as vol
 
 from homeassistant.components.sensor import (
@@ -23,6 +21,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 import homeassistant.util.dt as dt_util
+from security import safe_requests
 
 _RESOURCE = "https://data.dublinked.ie/cgi-bin/rtpi/realtimebusinformation"
 
@@ -151,7 +150,7 @@ class PublicTransportData:
         params["maxresults"] = 2
         params["format"] = "json"
 
-        response = requests.get(_RESOURCE, params, timeout=10)
+        response = safe_requests.get(_RESOURCE, params, timeout=10)
 
         if response.status_code != HTTPStatus.OK:
             self.info = [

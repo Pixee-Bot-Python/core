@@ -7,7 +7,6 @@ import logging
 from typing import Any
 
 from notifications_android_tv import Notifications
-import requests
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 import voluptuous as vol
 
@@ -47,6 +46,7 @@ from .const import (
     DEFAULT_TIMEOUT,
     DOMAIN,
 )
+from security import safe_requests
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -211,10 +211,10 @@ class NFAndroidTVNotificationService(BaseNotificationService):
                     else:
                         auth_ = HTTPBasicAuth(username, password)
                     # Load file from URL with authentication
-                    req = requests.get(url, auth=auth_, timeout=DEFAULT_TIMEOUT)
+                    req = safe_requests.get(url, auth=auth_, timeout=DEFAULT_TIMEOUT)
                 else:
                     # Load file from URL without authentication
-                    req = requests.get(url, timeout=DEFAULT_TIMEOUT)
+                    req = safe_requests.get(url, timeout=DEFAULT_TIMEOUT)
                 return req.content
 
             if local_path is not None:

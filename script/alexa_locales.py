@@ -4,9 +4,9 @@ from pprint import pprint
 import re
 
 from bs4 import BeautifulSoup
-import requests
 
 from homeassistant.components.alexa import capabilities
+from security import safe_requests
 
 SITE = (
     "https://developer.amazon.com/en-GB/docs/alexa/device-apis/list-of-interfaces.html"
@@ -15,7 +15,7 @@ SITE = (
 
 def run_script() -> None:
     """Run the script."""
-    response = requests.get(SITE, timeout=10)
+    response = safe_requests.get(SITE, timeout=10)
     soup = BeautifulSoup(response.text, "html.parser")
 
     table = soup.find("table")

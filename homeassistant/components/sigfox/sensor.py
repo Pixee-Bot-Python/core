@@ -20,6 +20,7 @@ from homeassistant.core import HomeAssistant
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
+from security import safe_requests
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -76,7 +77,7 @@ class SigfoxAPI:
     def check_credentials(self):
         """Check API credentials are valid."""
         url = urljoin(API_URL, "devicetypes")
-        response = requests.get(url, auth=self._auth, timeout=10)
+        response = safe_requests.get(url, auth=self._auth, timeout=10)
         if response.status_code != HTTPStatus.OK:
             if response.status_code == HTTPStatus.UNAUTHORIZED:
                 _LOGGER.error("Invalid credentials for Sigfox API")
@@ -91,7 +92,7 @@ class SigfoxAPI:
     def get_device_types(self):
         """Get a list of device types."""
         url = urljoin(API_URL, "devicetypes")
-        response = requests.get(url, auth=self._auth, timeout=10)
+        response = safe_requests.get(url, auth=self._auth, timeout=10)
         return [device["id"] for device in json.loads(response.text)["data"]]
 
     def get_devices(self, device_types):
@@ -100,7 +101,7 @@ class SigfoxAPI:
         for unique_type in device_types:
             location_url = f"devicetypes/{unique_type}/devices"
             url = urljoin(API_URL, location_url)
-            response = requests.get(url, auth=self._auth, timeout=10)
+            response = safe_requests.get(url, auth=self._auth, timeout=10)
             devices_data = json.loads(response.text)["data"]
             devices.extend(device["id"] for device in devices_data)
         return devices
@@ -131,7 +132,7 @@ class SigfoxDevice(SensorEntity):
         """Return the last message from a device."""
         device_url = f"devices/{self._device_id}/messages?limit=1"
         url = urljoin(API_URL, device_url)
-        response = requests.get(url, auth=self._auth, timeout=10)
+        response = safe_requests.get(url, auth=self._auth, timeout=10)
         data = json.loads(response.text)["data"][0]
         payload = bytes.fromhex(data["data"]).decode("utf-8")
         lat = data["rinfos"][0]["lat"]

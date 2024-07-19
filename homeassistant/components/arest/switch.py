@@ -18,6 +18,7 @@ from homeassistant.core import HomeAssistant
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
+from security import safe_requests
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -58,7 +59,7 @@ def setup_platform(
     resource = config[CONF_RESOURCE]
 
     try:
-        response = requests.get(resource, timeout=10)
+        response = safe_requests.get(resource, timeout=10)
     except requests.exceptions.MissingSchema:
         _LOGGER.error(
             "Missing resource or schema in configuration. Add http:// to your URL"
@@ -114,7 +115,7 @@ class ArestSwitchFunction(ArestSwitchBase):
         super().__init__(resource, location, name)
         self._func = func
 
-        request = requests.get(f"{self._resource}/{self._func}", timeout=10)
+        request = safe_requests.get(f"{self._resource}/{self._func}", timeout=10)
 
         if request.status_code != HTTPStatus.OK:
             _LOGGER.error("Can't find function")
@@ -129,8 +130,7 @@ class ArestSwitchFunction(ArestSwitchBase):
 
     def turn_on(self, **kwargs: Any) -> None:
         """Turn the device on."""
-        request = requests.get(
-            f"{self._resource}/{self._func}", timeout=10, params={"params": "1"}
+        request = safe_requests.get(f"{self._resource}/{self._func}", timeout=10, params={"params": "1"}
         )
 
         if request.status_code == HTTPStatus.OK:
@@ -140,8 +140,7 @@ class ArestSwitchFunction(ArestSwitchBase):
 
     def turn_off(self, **kwargs: Any) -> None:
         """Turn the device off."""
-        request = requests.get(
-            f"{self._resource}/{self._func}", timeout=10, params={"params": "0"}
+        request = safe_requests.get(f"{self._resource}/{self._func}", timeout=10, params={"params": "0"}
         )
 
         if request.status_code == HTTPStatus.OK:
@@ -154,7 +153,7 @@ class ArestSwitchFunction(ArestSwitchBase):
     def update(self) -> None:
         """Get the latest data from aREST API and update the state."""
         try:
-            request = requests.get(f"{self._resource}/{self._func}", timeout=10)
+            request = safe_requests.get(f"{self._resource}/{self._func}", timeout=10)
             self._attr_is_on = request.json()["return_value"] != 0
             self._attr_available = True
         except requests.exceptions.ConnectionError:
@@ -176,8 +175,7 @@ class ArestSwitchPin(ArestSwitchBase):
     def turn_on(self, **kwargs: Any) -> None:
         """Turn the device on."""
         turn_on_payload = int(not self.invert)
-        request = requests.get(
-            f"{self._resource}/digital/{self._pin}/{turn_on_payload}", timeout=10
+        request = safe_requests.get(f"{self._resource}/digital/{self._pin}/{turn_on_payload}", timeout=10
         )
         if request.status_code == HTTPStatus.OK:
             self._attr_is_on = True
@@ -187,8 +185,7 @@ class ArestSwitchPin(ArestSwitchBase):
     def turn_off(self, **kwargs: Any) -> None:
         """Turn the device off."""
         turn_off_payload = int(self.invert)
-        request = requests.get(
-            f"{self._resource}/digital/{self._pin}/{turn_off_payload}", timeout=10
+        request = safe_requests.get(f"{self._resource}/digital/{self._pin}/{turn_off_payload}", timeout=10
         )
         if request.status_code == HTTPStatus.OK:
             self._attr_is_on = False
@@ -198,7 +195,7 @@ class ArestSwitchPin(ArestSwitchBase):
     def update(self) -> None:
         """Get the latest data from aREST API and update the state."""
         try:
-            request = requests.get(f"{self._resource}/digital/{self._pin}", timeout=10)
+            request = safe_requests.get(f"{self._resource}/digital/{self._pin}", timeout=10)
             status_value = int(self.invert)
             self._attr_is_on = request.json()["return_value"] != status_value
             if self._attr_available is False:
@@ -209,7 +206,7 @@ class ArestSwitchPin(ArestSwitchBase):
             self._attr_available = False
 
     def __set_pin_output(self) -> None:
-        request = requests.get(f"{self._resource}/mode/{self._pin}/o", timeout=10)
+        request = safe_requests.get(f"{self._resource}/mode/{self._pin}/o", timeout=10)
         if request.status_code != HTTPStatus.OK:
             _LOGGER.error("Can't set mode")
             self._attr_available = False

@@ -24,6 +24,7 @@ from homeassistant.const import (
 from homeassistant.core import HomeAssistant
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
+from security import safe_requests
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -101,8 +102,7 @@ class ClicksendNotificationService(BaseNotificationService):
 def _authenticate(config: ConfigType) -> bool:
     """Authenticate with ClickSend."""
     api_url = f"{BASE_API_URL}/account"
-    resp = requests.get(
-        api_url,
+    resp = safe_requests.get(api_url,
         headers=HEADERS,
         auth=(config[CONF_USERNAME], config[CONF_API_KEY]),
         timeout=TIMEOUT,
