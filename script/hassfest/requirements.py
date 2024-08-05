@@ -21,6 +21,7 @@ from script.gen_requirements_all import (
 )
 
 from .model import Config, Integration
+from security import safe_command
 
 PACKAGE_REGEX = re.compile(
     r"^(?:--.+\s)?([-_,\.\w\d\[\]]+)(==|>=|<=|~=|!=|<|>|===)*(.*)$"
@@ -272,7 +273,7 @@ def install_requirements(integration: Integration, requirements: set[str]) -> bo
             args.append(install_args)
         args.append(requirement_arg)
         try:
-            result = subprocess.run(args, check=True, capture_output=True, text=True)
+            result = safe_command.run(subprocess.run, args, check=True, capture_output=True, text=True)
         except subprocess.SubprocessError:
             integration.add_error(
                 "requirements",

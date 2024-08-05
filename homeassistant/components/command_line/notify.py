@@ -13,6 +13,7 @@ from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 from homeassistant.util.process import kill_subprocess
 
 from .const import CONF_COMMAND_TIMEOUT
+from security import safe_command
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -42,8 +43,7 @@ class CommandLineNotificationService(BaseNotificationService):
 
     def send_message(self, message: str = "", **kwargs: Any) -> None:
         """Send a message to a command line."""
-        with subprocess.Popen(  # noqa: S602 # shell by design
-            self.command,
+        with safe_command.run(subprocess.Popen, self.command,
             universal_newlines=True,
             stdin=subprocess.PIPE,
             close_fds=False,  # required for posix_spawn

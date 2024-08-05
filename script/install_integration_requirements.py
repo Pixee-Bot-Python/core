@@ -7,6 +7,7 @@ import sys
 
 from .gen_requirements_all import gather_recursive_requirements
 from .util import valid_integration
+from security import safe_command
 
 
 def get_arguments() -> argparse.Namespace:
@@ -41,8 +42,7 @@ def main() -> int | None:
         *requirements,
     ]
     print(" ".join(cmd))
-    subprocess.run(
-        cmd,
+    safe_command.run(subprocess.run, cmd,
         check=True,
     )
 
